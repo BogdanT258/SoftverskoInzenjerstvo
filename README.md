@@ -2,8 +2,8 @@
 
 ## Team
 
-- Frontend: [Tvoje Ime]
-- Backend: [Ime Druga]
+- Frontend: Bogdan Trivic
+- Backend: Srdjan
 
 ## Tech Stack
 
