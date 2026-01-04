@@ -1,0 +1,8 @@
+/* Import Global Styles */
+@import "./global.css";
+
+/* Additional global styles if needed */
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}

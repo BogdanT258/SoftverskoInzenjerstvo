@@ -1,0 +1,222 @@
+/* Shared Auth Page Styles (Login & Register) */
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color-bg-black);
+  padding: 20px;
+}
+
+.auth-container {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  height: 500px;
+  background: var(--gradient-background);
+  border: 3px solid var(--color-border-purple);
+  border-radius: 15px;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Flipped layout for Register page */
+.auth-container.flipped {
+  flex-direction: row-reverse;
+}
+
+/* Form Side */
+.auth-form-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 50px;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 2;
+}
+
+.auth-title {
+  color: var(--color-text-white);
+  font-size: 42px;
+  font-weight: 700;
+  margin-bottom: 40px;
+  text-align: left;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.input-group {
+  position: relative;
+  width: 100%;
+}
+
+.auth-input {
+  width: 100%;
+  padding: 15px 45px 15px 15px;
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid var(--color-text-white);
+  color: var(--color-text-white);
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.auth-input::placeholder {
+  color: var(--color-text-white);
+  opacity: 0.9;
+}
+
+.auth-input:focus {
+  border-bottom-color: var(--color-primary-light);
+}
+
+.input-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+}
+
+.error-message {
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.auth-button {
+  width: 100%;
+  padding: 15px;
+  background: var(--gradient-primary);
+  color: var(--color-text-white);
+  border: none;
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-top: 10px;
+}
+
+.auth-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-button);
+}
+
+.auth-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.auth-link-text {
+  color: var(--color-text-white);
+  text-align: center;
+  margin-top: 25px;
+  font-size: 14px;
+}
+
+.auth-link {
+  color: var(--color-text-link);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+.auth-link:hover {
+  color: var(--color-text-link-hover);
+  text-decoration: underline;
+}
+
+/* Diagonal Line */
+.diagonal-line {
+  position: absolute;
+  top: -50%;
+  left: 45%;
+  width: 4px;
+  height: 200%;
+  background: var(--gradient-diagonal);
+  transform: rotate(-25deg);
+  z-index: 1;
+  box-shadow: var(--shadow-glow);
+}
+
+/* Flipped diagonal for Register */
+.auth-container.flipped .diagonal-line {
+  left: auto;
+  right: 45%;
+}
+
+/* Welcome Side */
+.auth-welcome-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 50px;
+  background: linear-gradient(
+    135deg,
+    rgba(74, 15, 122, 0.3) 0%,
+    rgba(107, 47, 181, 0.5) 100%
+  );
+  z-index: 0;
+}
+
+.welcome-title {
+  color: var(--color-text-white);
+  font-size: 56px;
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 20px;
+  text-align: center;
+  text-shadow: 2px 2px 8px rgba(139, 92, 246, 0.5);
+}
+
+.welcome-text {
+  color: var(--color-text-gray);
+  font-size: 16px;
+  line-height: 1.6;
+  text-align: center;
+  opacity: 0.9;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .auth-container,
+  .auth-container.flipped {
+    flex-direction: column;
+    height: auto;
+    max-width: 400px;
+  }
+
+  .diagonal-line {
+    display: none;
+  }
+
+  .auth-form-side {
+    padding: 40px 30px;
+  }
+
+  .auth-welcome-side {
+    padding: 40px 30px;
+  }
+
+  .auth-title {
+    font-size: 32px;
+  }
+
+  .welcome-title {
+    font-size: 36px;
+  }
+}

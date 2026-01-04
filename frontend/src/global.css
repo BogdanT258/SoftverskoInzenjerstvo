@@ -1,0 +1,63 @@
+/* Global CSS Variables and Resets */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Primary Colors */
+  --color-primary: #7c3aed;
+  --color-primary-dark: #5b21b6;
+  --color-primary-light: #8b5cf6;
+
+  /* Background Colors */
+  --color-bg-black: #000000;
+  --color-bg-dark: #1a0033;
+  --color-bg-purple: #4a0f7a;
+
+  /* Border Colors */
+  --color-border-purple: #6b2fb5;
+
+  /* Text Colors */
+  --color-text-white: #ffffff;
+  --color-text-gray: #e0e0e0;
+  --color-text-link: #818cf8;
+  --color-text-link-hover: #a78bfa;
+
+  /* Error Colors */
+  --color-error: #ef4444;
+  --color-error-bg: rgba(239, 68, 68, 0.2);
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+  --gradient-background: linear-gradient(
+    135deg,
+    #1a0033 0%,
+    #000000 50%,
+    #4a0f7a 100%
+  );
+  --gradient-diagonal: linear-gradient(180deg, #8b5cf6 0%, #6b2fb5 100%);
+
+  /* Shadows */
+  --shadow-glow: 0 0 20px rgba(139, 92, 246, 0.5);
+  --shadow-button: 0 5px 15px rgba(124, 58, 237, 0.4);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-bg-black);
+}
