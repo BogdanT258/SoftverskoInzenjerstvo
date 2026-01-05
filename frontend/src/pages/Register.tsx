@@ -40,16 +40,16 @@ const Register: React.FC = () => {
         {/* Welcome Side - Now on Left */}
         <div className="auth-welcome-side">
           <h2 className="welcome-title">
-            WELCOME
+            JOIN OUR
             <br />
-            BACK!
+            LIBRARY!
           </h2>
           <p className="welcome-text">
-            Lorem ipsum, dolor sit
+            Discover thousands of books
             <br />
-            amet consectetur
+            and start your reading
             <br />
-            adipisicing
+            journey today
           </p>
         </div>
 

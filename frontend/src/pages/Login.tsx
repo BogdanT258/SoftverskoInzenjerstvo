@@ -80,16 +80,16 @@ const Login: React.FC = () => {
         {/* Right Side - Welcome Text */}
         <div className="auth-welcome-side">
           <h2 className="welcome-title">
-            WELCOME
+            HELLO
             <br />
-            BACK!
+            AGAIN!
           </h2>
           <p className="welcome-text">
-            Lorem ipsum, dolor sit
+            Log in to browse books
             <br />
-            amet consectetur
+            and manage your
             <br />
-            adipisicing
+            borrowed collection
           </p>
         </div>
       </div>
