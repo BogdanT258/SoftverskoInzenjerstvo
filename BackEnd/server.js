@@ -51,7 +51,7 @@ app.post("/api/auth/register", async (req, res) => {
     message: "User registered successfully",
     user: {
       id: user.id,
-      fullName: user.fullName,
+      fullName: user.full_name,
       email: user.email,
       role: user.role,
     },
@@ -80,7 +80,7 @@ app.post("/api/auth/login", async (req, res) => {
     user: {
       id: user.id,
       email: user.email,
-      fullName: user.fullName,
+      fullName: user.full_name,
       role: user.role,
       indexNumber: user.index_number,
     },

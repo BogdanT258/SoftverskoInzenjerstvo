@@ -5,6 +5,7 @@ import "./Auth.css";
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState("");
+  const [indexNumber, setIndexNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -23,6 +24,7 @@ const Register: React.FC = () => {
         email,
         password,
         fullName: username,
+        indexNumber: indexNumber || undefined, // Only send if not empty
         role: "student",
       });
       navigate("/");
@@ -67,10 +69,21 @@ const Register: React.FC = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                placeholder="Username"
+                placeholder="Enter your full name"
                 className="auth-input"
               />
               <span className="input-icon">👤</span>
+            </div>
+
+            <div className="input-group">
+              <input
+                type="text"
+                value={indexNumber}
+                onChange={(e) => setIndexNumber(e.target.value)}
+                placeholder="Index Number (e.g. RA-123/2024)"
+                className="auth-input"
+              />
+              <span className="input-icon">🎓</span>
             </div>
 
             <div className="input-group">
