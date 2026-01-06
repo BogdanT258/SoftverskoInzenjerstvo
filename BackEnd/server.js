@@ -4,6 +4,7 @@ import cors from "cors";
 import bcrypt from "bcrypt";
 import validator from "validator";
 import jwt from "jsonwebtoken";
+import rateLimit from "express-rate-limit";
 import { sequelize, Users, Books, Loans } from "./models.js";
 import { authenticateJWT, authorizeRoles } from "./middleware.js";
 
@@ -11,6 +12,13 @@ await sequelize.sync({alter:true});
 console.log("Sihronizovana tabela");
 
 const app = express();
+
+const limiter = rateLimit({
+  windowMs: 1000 * 60 * 5,
+  max: 50,
+  statusCode: 429,
+  message:"Too many attempts, try again in 5 minutes"
+});
 
 app.use(cors({
     origin:process.env.FRONT_URL
@@ -40,7 +48,7 @@ app.post("/api/auth/register", async (req,res)=>{
     })
 });
 
-app.post("/api/auth/login", async(req,res)=>{
+app.post("/api/auth/login", limiter, async(req,res)=>{
     const {email, password} = req.body;
 
     if(!email || !password) return res.status(400).json({message:"Missing email or password"});
@@ -356,6 +364,50 @@ app.put("api/loans/:id/return", authenticateJWT, async (req, res) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 });
+
+app.get("/api/stats/dashboard", authenticateJWT, authorizeRoles("librarian"), async (req, res) => {
+    try {
+      const now = new Date();
+      const [totalBooks, totalLoans, activeLoans, overdueLoans, totalUsers, availableBooks ] = await Promise.all([
+        
+        Books.count(),
+
+        Loans.count(),
+
+        Loans.count({
+          where: { status: "active" }
+        }),
+
+        Loans.count({
+          where: {
+            status: "active",
+            due_date: { [sequelize.Op.lt]: now }
+          }
+        }),
+
+        Users.count(),
+
+        Books.count({
+          where: {
+            available_copies: { [sequelize.Op.gt]: 0 }
+          }
+        })
+      ]);
+
+      res.json({
+        totalBooks,
+        totalLoans,
+        activeLoans,
+        overdueLoans,
+        totalUsers,
+        availableBooks
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Failed to load dashboard stats" });
+    }
+  }
+);
 
 app.post("/api/auth/logout",authenticateJWT,async(req,res)=>{
     res.clearCookie("jwt");
