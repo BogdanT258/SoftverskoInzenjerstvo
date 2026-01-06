@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-export function authenticate(req,res,next){
+export function authenticateJWT(req,res,next){
     const header = req.headers.authorization;
     if(!header) return res.status(401).json({message:"Missing token"});
 
