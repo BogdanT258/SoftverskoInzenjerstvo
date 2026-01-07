@@ -1,102 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { booksAPI, loansAPI } from "../services/api";
 import Navbar from "../components/Navbar";
 import "./BookDetailsPage.css";
-
-// Mock data - same as BooksPage (later from API)
-const mockBooks = [
-  {
-    id: 1,
-    title: "Clean Code",
-    author: "Robert C. Martin",
-    isbn: "978-0132350884",
-    category: "Programming",
-    description:
-      "Even bad code can function. But if code isn't clean, it can bring a development organization to its knees. Every year, countless hours and significant resources are lost because of poorly written code. But it doesn't have to be that way.",
-    publisher: "Prentice Hall",
-    publishYear: 2008,
-    totalCopies: 5,
-    availableCopies: 3,
-    imageUrl:
-      "https://m.media-amazon.com/images/I/41xShlnTZTL._SY445_SX342_.jpg",
-  },
-  {
-    id: 2,
-    title: "Introduction to Algorithms",
-    author: "Thomas H. Cormen",
-    isbn: "978-0262033848",
-    category: "Computer Science",
-    description:
-      "Some books on algorithms are rigorous but incomplete; others cover masses of material but lack rigor. Introduction to Algorithms uniquely combines rigor and comprehensiveness.",
-    publisher: "MIT Press",
-    publishYear: 2009,
-    totalCopies: 3,
-    availableCopies: 2,
-    imageUrl:
-      "https://m.media-amazon.com/images/I/61Pgdn8Ys-L._AC_UF1000,1000_QL80_.jpg",
-  },
-  {
-    id: 3,
-    title: "Design Patterns",
-    author: "Gang of Four",
-    isbn: "978-0201633612",
-    category: "Programming",
-    description:
-      "Capturing a wealth of experience about the design of object-oriented software, four top-notch designers present a catalog of simple and succinct solutions to commonly occurring design problems.",
-    publisher: "Addison-Wesley",
-    publishYear: 1994,
-    totalCopies: 4,
-    availableCopies: 4,
-    imageUrl:
-      "https://m.media-amazon.com/images/I/51szD9HC9pL._AC_UF1000,1000_QL80_.jpg",
-  },
-  {
-    id: 4,
-    title: "The Pragmatic Programmer",
-    author: "Andrew Hunt",
-    isbn: "978-0135957059",
-    category: "Programming",
-    description:
-      "The Pragmatic Programmer is one of those rare tech books you'll read, re-read, and read again over the years. Whether you're new to the field or an experienced practitioner, you'll come away with fresh insights each and every time.",
-    publisher: "Addison-Wesley",
-    publishYear: 2019,
-    totalCopies: 3,
-    availableCopies: 1,
-    imageUrl:
-      "https://m.media-amazon.com/images/I/71VvgGt3EFL._AC_UF1000,1000_QL80_.jpg",
-  },
-  {
-    id: 5,
-    title: "You Don't Know JS",
-    author: "Kyle Simpson",
-    isbn: "978-1491904244",
-    category: "Programming",
-    description:
-      "No matter how much experience you have with JavaScript, odds are you don't fully understand the language. This concise yet in-depth guide takes you inside scope and closures, two core concepts you need to know to become a more efficient and effective JavaScript programmer.",
-    publisher: "O'Reilly",
-    publishYear: 2015,
-    totalCopies: 5,
-    availableCopies: 5,
-    imageUrl:
-      "https://m.media-amazon.com/images/I/71VKNel7WxL._AC_UF1000,1000_QL80_.jpg",
-  },
-  {
-    id: 6,
-    title: "Eloquent JavaScript",
-    author: "Marijn Haverbeke",
-    isbn: "978-1593279509",
-    category: "Programming",
-    description:
-      "JavaScript lies at the heart of almost every modern web application. Eloquent JavaScript dives deep into the JavaScript language to show you how to write beautiful, effective code.",
-    publisher: "No Starch Press",
-    publishYear: 2018,
-    totalCopies: 4,
-    availableCopies: 2,
-    imageUrl:
-      "https://m.media-amazon.com/images/I/91asIC1fRwL._AC_UF1000,1000_QL80_.jpg",
-  },
-];
 
 const BookDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -106,24 +13,62 @@ const BookDetailsPage: React.FC = () => {
   const [book, setBook] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [borrowing, setBorrowing] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      const foundBook = mockBooks.find((b) => b.id === Number(id));
-      setBook(foundBook);
-      setLoading(false);
-    }, 300);
+    const fetchBook = async () => {
+      try {
+        setLoading(true);
+        // Tvoj api.ts već vraća data direktno!
+        const bookData: any = await booksAPI.getById(Number(id));
+
+        // Format book data
+        const formattedBook = {
+          id: bookData.id,
+          title: bookData.title,
+          author: bookData.author,
+          isbn: bookData.isbn,
+          category: bookData.category,
+          description: bookData.description,
+          publisher: bookData.publisher,
+          publishYear: bookData.publish_year, // ✅ POPRAVI
+          totalCopies: bookData.total_copies, // ✅ POPRAVI
+          availableCopies: bookData.available_copies, // ✅ POPRAVI
+          imageUrl: bookData.image_url, // ✅ POPRAVI
+        };
+
+        setBook(formattedBook);
+        setError("");
+      } catch (err: any) {
+        console.error("Failed to fetch book:", err);
+        setError("Failed to load book details.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchBook();
+    }
   }, [id]);
 
   const handleBorrow = async () => {
+    if (!book) return;
+
     setBorrowing(true);
-    // TODO: Implement actual borrow API call
-    setTimeout(() => {
+    try {
+      // Tvoj api.ts koristi loansAPI.create() sa CreateLoanData
+      await loansAPI.create({ bookId: book.id });
       alert("Book borrowed successfully! You have 14 days to return it.");
-      setBorrowing(false);
       navigate("/my-loans");
-    }, 1000);
+    } catch (err: any) {
+      const errorMessage =
+        err.response?.data?.message ||
+        "Failed to borrow book. Please try again.";
+      alert(errorMessage);
+    } finally {
+      setBorrowing(false);
+    }
   };
 
   const handleGoBack = () => {
@@ -139,12 +84,12 @@ const BookDetailsPage: React.FC = () => {
     );
   }
 
-  if (!book) {
+  if (error || !book) {
     return (
       <div className="book-details-page">
         <Navbar />
         <div className="error-container">
-          <h2>Book not found</h2>
+          <h2>{error || "Book not found"}</h2>
           <button onClick={handleGoBack} className="back-btn">
             ← Back to Books
           </button>
