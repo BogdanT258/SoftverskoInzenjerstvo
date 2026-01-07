@@ -11,6 +11,7 @@ import Register from "./pages/Register";
 import Home from "./pages/Home";
 import BooksPage from "./pages/BooksPage";
 import BookDetailsPage from "./pages/BookDetailsPage";
+import MyLoansPage from "./pages/MyLoansPage";
 import "./App.css";
 
 // Protected Route wrapper
@@ -62,17 +63,7 @@ function App() {
             path="/my-loans"
             element={
               <ProtectedRoute>
-                <div
-                  style={{
-                    color: "white",
-                    padding: "40px",
-                    textAlign: "center",
-                    minHeight: "100vh",
-                    background: "#000000",
-                  }}
-                >
-                  <h1>My Loans Page - Coming Soon!</h1>
-                </div>
+                <MyLoansPage />
               </ProtectedRoute>
             }
           />

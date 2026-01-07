@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import rateLimit from "express-rate-limit";
 import { sequelize, Users, Books, Loans } from "./models.js";
 import { authenticateJWT, authorizeRoles } from "./middleware.js";
+import { Op } from "sequelize";
 
 await sequelize.sync({ alter: true });
 console.log("Sihronizovana tabela");
@@ -17,7 +18,7 @@ const limiter = rateLimit({
   windowMs: 1000 * 60 * 5,
   max: 50,
   statusCode: 429,
-  message:"Too many attempts, try again in 5 minutes"
+  message: "Too many attempts, try again in 5 minutes",
 });
 
 app.use(
@@ -66,8 +67,8 @@ app.post("/api/auth/register", async (req, res) => {
   });
 });
 
-app.post("/api/auth/login", limiter, async(req,res)=>{
-    const {email, password} = req.body;
+app.post("/api/auth/login", limiter, async (req, res) => {
+  const { email, password } = req.body;
   if (!email || !password)
     return res.status(400).json({ message: "Missing email or password" });
 
@@ -105,7 +106,11 @@ app.get("/api/books/:id", authenticateJWT, async (req, res) => {
   res.json(book);
 });
 
-app.post("/api/books", authenticateJWT, authorizeRoles("librarian"), async (req, res) => {
+app.post(
+  "/api/books",
+  authenticateJWT,
+  authorizeRoles("librarian"),
+  async (req, res) => {
     const {
       title,
       author,
@@ -171,7 +176,11 @@ app.post("/api/books", authenticateJWT, authorizeRoles("librarian"), async (req,
   }
 );
 
-app.put("/api/books/:id", authenticateJWT, authorizeRoles("librarian"), async (req, res) => {
+app.put(
+  "/api/books/:id",
+  authenticateJWT,
+  authorizeRoles("librarian"),
+  async (req, res) => {
     const currentYear = new Date().getFullYear();
     const book = await Books.findByPk(req.params.id);
     if (!book) return res.status(404).json({ message: "Book not found" });
@@ -234,7 +243,11 @@ app.put("/api/books/:id", authenticateJWT, authorizeRoles("librarian"), async (r
   }
 );
 
-app.delete("/api/books/:id", authenticateJWT, authorizeRoles("librarian"), async (req, res) => {
+app.delete(
+  "/api/books/:id",
+  authenticateJWT,
+  authorizeRoles("librarian"),
+  async (req, res) => {
     const activeLoans = await Loans.count({
       where: { book_id: req.params.id, status: "active" },
     });
@@ -287,7 +300,11 @@ app.get("/api/loans/my", authenticateJWT, async (req, res) => {
   }
 });
 
-app.get("/api/loans", authenticateJWT, authorizeRoles("librarian"), async (req, res) => {
+app.get(
+  "/api/loans",
+  authenticateJWT,
+  authorizeRoles("librarian"),
+  async (req, res) => {
     try {
       const loans = await Loans.findAll({
         include: [
@@ -375,7 +392,7 @@ app.post("/api/loans", authenticateJWT, async (req, res) => {
       where: {
         user_id: userId,
         status: "active",
-        due_date: { [sequelize.Op.lt]: new Date() },
+        due_date: { [Op.lt]: new Date() },
       },
       transaction: t,
     });
@@ -474,33 +491,43 @@ app.put("/api/loans/:id/return", authenticateJWT, async (req, res) => {
   }
 });
 
-app.get("/api/stats/dashboard", authenticateJWT, authorizeRoles("librarian"), async (req, res) => {
+app.get(
+  "/api/stats/dashboard",
+  authenticateJWT,
+  authorizeRoles("librarian"),
+  async (req, res) => {
     try {
       const now = new Date();
-      const [totalBooks, totalLoans, activeLoans, overdueLoans, totalUsers, availableBooks ] = await Promise.all([
-        
+      const [
+        totalBooks,
+        totalLoans,
+        activeLoans,
+        overdueLoans,
+        totalUsers,
+        availableBooks,
+      ] = await Promise.all([
         Books.count(),
 
         Loans.count(),
 
         Loans.count({
-          where: { status: "active" }
+          where: { status: "active" },
         }),
 
         Loans.count({
           where: {
             status: "active",
-            due_date: { [sequelize.Op.lt]: now }
-          }
+            due_date: { [sequelize.Op.lt]: now },
+          },
         }),
 
         Users.count(),
 
         Books.count({
           where: {
-            available_copies: { [sequelize.Op.gt]: 0 }
-          }
-        })
+            available_copies: { [sequelize.Op.gt]: 0 },
+          },
+        }),
       ]);
 
       res.json({
@@ -509,7 +536,7 @@ app.get("/api/stats/dashboard", authenticateJWT, authorizeRoles("librarian"), as
         activeLoans,
         overdueLoans,
         totalUsers,
-        availableBooks
+        availableBooks,
       });
     } catch (err) {
       console.error(err);
@@ -518,10 +545,10 @@ app.get("/api/stats/dashboard", authenticateJWT, authorizeRoles("librarian"), as
   }
 );
 
-app.post("/api/auth/logout",authenticateJWT,async(req,res)=>{
-    res.clearCookie("jwt");
-    res.status(201).json({message:"Logged out"});
-})
+app.post("/api/auth/logout", authenticateJWT, async (req, res) => {
+  res.clearCookie("jwt");
+  res.status(201).json({ message: "Logged out" });
+});
 
 app.listen(process.env.PORT, () => {
   console.log("Server is listening");
